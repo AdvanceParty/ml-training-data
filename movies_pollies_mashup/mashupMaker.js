@@ -3,7 +3,7 @@ const util = require('util');
 const readFile = util.promisify(fs.readFile);
 const writeFile = util.promisify(fs.writeFile);
 const inputPath = './mashup_data.json';
-const outputPath = './mashup.txt';
+const outputPath = './mashup_shorterAnswers.txt';
 
 const start = async (inputPath, outputPath) => {
   const raw = await readFile(inputPath);
@@ -34,7 +34,12 @@ const sortData = data => {
 
 const serialiseSpeechItem = obj => {
   const s = obj.speaker === 'ATMOS' ? '' : `${obj.speaker}: `;
-  return s + obj.value + '\n';
+  const sentences = obj.value.split('.');
+  let value = sentences[0];
+  if (value.length < 50 && sentences.length > 1) {
+    value += `. ${sentences[1]}`;
+  }
+  return s + value + '\n';
 };
 
 const getArrayItem = (arr, i) => arr[i % arr.length];
